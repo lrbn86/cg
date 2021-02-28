@@ -1,4 +1,5 @@
 function Projectile(x, y, radius, color, velocity, c) {
+
 	this.x = x;
 	this.y = y;
 	this.radius = radius;
@@ -11,6 +12,13 @@ function Projectile(x, y, radius, color, velocity, c) {
 		c.fillStyle = this.color;
 		c.fill();
 	}
+
+	this.update = function() {
+		this.x = this.x + this.velocity.x;
+		this.y = this.y + this.velocity.y;
+		this.draw();
+	}
+
 }
 
 export default Projectile;
