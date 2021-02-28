@@ -1,4 +1,5 @@
 function Player(x, y, radius, color, c) {
+
 	this.x = x;
 	this.y = y;
 	this.radius = radius;
@@ -10,6 +11,11 @@ function Player(x, y, radius, color, c) {
 		c.fillStyle = this.color;
 		c.fill();
 	}
+	
+	this.update = function() {
+		this.draw();
+	}
+
 }
 
 export default Player;
