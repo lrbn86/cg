@@ -45,25 +45,34 @@ function animate() {
 // 1 second = 1000 milliseconds
 function spawnEnemies() {
 	setInterval(function() {
-		let x;
-		let y;
-		const radius = 30;
+		let enemyX;
+		let enemyY;
+		const enemyRadius = 30;
 
+		// The enemy will spawn randomly on the edges of the window on a 50/50 chance
+		// Math.random() returns a value between 0 and, but not including, 1 (i.e. [0, 1))
 		if (Math.random() < .5) {
-			x = Math.random() < .5 ? 0 - radius : canvas.width + radius;
-			y = Math.random() * canvas.height;
+			// There's a chance that the enemy spawns either on the left or right of the window
+			enemyX = Math.random() < .5 ? 0 - enemyRadius : canvas.width + enemyRadius;
+
+			// At the same time, the enemy's y is random between the top and bottom of the window
+			enemyY = Math.random() * canvas.height;
 		} else {
-			x = Math.random() * canvas.width;
-		  y = Math.random() < .5 ? 0 - radius : canvas.height + radius;
+
+			// The enemy's x will be between the left and right of the window
+			enemyX = Math.random() * canvas.width;
+
+			// There's a chance that the enemy spawns either on the top or bottom of the window
+		  enemyY = Math.random() < .5 ? 0 - enemyRadius : canvas.height + enemyRadius;
 		}
 
-		const color = 'red';
-		const angle = Math.atan2(player.y - y, player.x - x);
-		const velocity = {
+		const enemyColor = 'red';
+		const angle = Math.atan2(player.y - enemyY, player.x - enemyX);
+		const enemyVelocity = {
 			x: Math.cos(angle), y: Math.sin(angle)
 		};
 
-		const enemy = new Enemy(x, y, radius, color, velocity, c);
+		const enemy = new Enemy(enemyX, enemyY, enemyRadius, enemyColor, enemyVelocity, c);
 		enemies.push(enemy)
 	}, enemySpawnRate);
 }
