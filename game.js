@@ -1,4 +1,5 @@
 import Player from './src/Player.js';
+import Enemy from './src/Enemy.js';
 import Projectile from './src/Projectile.js';
 
 /* SET UP CANVAS */
@@ -19,6 +20,9 @@ const projectiles = []; // Array of projectiles
 const projectileSize = 10; // The projectile's radius
 const projectileColor = 'green'; // The color of the projectile
 
+const enemies = []; // Array of enemies
+const enemySpawnRate = 1000;
+
 // Render Loop
 function animate() {
 	requestAnimationFrame(animate);
@@ -31,12 +35,44 @@ function animate() {
 	projectiles.forEach((projectile) => {
 		projectile.update();
 	});
+
+	enemies.forEach((enemy) => {
+		enemy.update();
+	})
 }
 
+// Spawn an enemy based on enemySpawnRate
+// 1 second = 1000 milliseconds
+function spawnEnemies() {
+	setInterval(function() {
+		let x;
+		let y;
+		const radius = 30;
+
+		if (Math.random() < .5) {
+			x = Math.random() < .5 ? 0 - radius : canvas.width + radius;
+			y = Math.random() * canvas.height;
+		} else {
+			x = Math.random() * canvas.width;
+		  y = Math.random() < .5 ? 0 - radius : canvas.height + radius;
+		}
+
+		const color = 'red';
+		const angle = Math.atan2(player.y - y, player.x - x);
+		const velocity = {
+			x: Math.cos(angle), y: Math.sin(angle)
+		};
+
+		const enemy = new Enemy(x, y, radius, color, velocity, c);
+		enemies.push(enemy)
+	}, enemySpawnRate);
+}
+
+// Listen to clicks on the browser window
 window.addEventListener('click', function(event) {
 	const mouseX = event.clientX; // The position of where the mouse clicked on the x-axis
 	const mouseY = event.clientY; // The position of where the mouse clicked on the y-axis
-	const angle = Math.atan2(mouseY - centerY, mouseX - centerX) // Calculate angle
+	const angle = Math.atan2(mouseY - player.y, mouseX - player.x); // Calculate angle
 
 	// Calculate velocity
 	const velocity = {
@@ -51,4 +87,11 @@ window.addEventListener('click', function(event) {
 	projectiles.push(projectile); // Store projectile into projectiles array
 });
 
-animate();
+// Initialize and start the game
+// Maybe add loading/splash screen or something here...
+function startGame() {
+	animate();
+	spawnEnemies();
+}
+
+startGame();
