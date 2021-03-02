@@ -66,6 +66,7 @@ function animate() {
 		// Freeze frame upon contact indicating game over
 		if (distance - player.radius - enemy.radius < 1) {
 			cancelAnimationFrame(animationId);
+			endGame();
 		}
 		projectiles.forEach((projectile, projectileIndex) => {
 			const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
@@ -145,6 +146,13 @@ window.addEventListener('click', function(event) {
 function startGame() {
 	animate();
 	spawnEnemies();
+}
+
+function endGame() {
+	if (alert('Game over, press OK to play again!')) {
+	} else {
+		window.location.reload();
+	}
 }
 
 startGame();
