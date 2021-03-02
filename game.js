@@ -124,9 +124,17 @@ function spawnEnemies() {
 
 // Listen to clicks on the browser window
 function windowListener(event) {
-	const mouseX = event.clientX; // The position of where the mouse clicked on the x-axis
-	const mouseY = event.clientY; // The position of where the mouse clicked on the y-axis
-	const angle = Math.atan2(mouseY - player.y, mouseX - player.x); // Calculate angle
+	let angle;
+
+	if (event.type === 'touchstart') {
+		const touchX = event.touches[0].clientX;
+		const touchY = event.touches[0].clientY;
+		angle = Math.atan2(touchY - player.y, touchX - player.x); // Calculate angle
+	} else {
+		const mouseX = event.clientX; // The position of where the mouse clicked on the x-axis
+		const mouseY = event.clientY; // The position of where the mouse clicked on the y-axis
+		angle = Math.atan2(mouseY - player.y, mouseX - player.x); // Calculate angle
+	}
 
 	// Calculate velocity
 	const velocity = {
