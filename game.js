@@ -164,7 +164,7 @@ function startGame() {
 }
 
 function endGame() {
-	if (alert('Game over, press OK to play again!')) {
+	if (alert('Game Over')) {
 	} else {
 		window.location.reload();
 	}
