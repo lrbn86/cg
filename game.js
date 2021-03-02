@@ -123,7 +123,7 @@ function spawnEnemies() {
 }
 
 // Listen to clicks on the browser window
-window.addEventListener('click', function(event) {
+function windowListener(event) {
 	const mouseX = event.clientX; // The position of where the mouse clicked on the x-axis
 	const mouseY = event.clientY; // The position of where the mouse clicked on the y-axis
 	const angle = Math.atan2(mouseY - player.y, mouseX - player.x); // Calculate angle
@@ -139,13 +139,20 @@ window.addEventListener('click', function(event) {
 	const projectile = new Projectile(centerX, centerY, projectileSize, projectileColor, velocity, c);
 
 	projectiles.push(projectile); // Store projectile into projectiles array
-});
+}
 
 // Initialize and start the game
 // Maybe add loading/splash screen or something here...
 function startGame() {
 	animate();
 	spawnEnemies();
+	if ('ontouchstart' in window) {
+		window.addEventListener('touchstart', windowListener);
+		console.log("MOBILE");
+	} else {
+		window.addEventListener('click', windowListener);
+		console.log("DESKTOP");
+	}
 }
 
 function endGame() {
