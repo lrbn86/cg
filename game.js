@@ -23,22 +23,64 @@ const projectileColor = 'green'; // The color of the projectile
 const enemies = []; // Array of enemies
 const enemySpawnRate = 1000;
 
+let animationId; // Contains the current frame
+
 // Render Loop
 function animate() {
-	requestAnimationFrame(animate);
-	c.clearRect(0, 0, canvas.width, canvas.height); // Clear the screen
+	animationId = requestAnimationFrame(animate);
+	c.fillStyle = "rgba(0, 0, 0, 0.3)";
+	c.fillRect(0, 0, canvas.width, canvas.height); // Clear the screen
 	player.update(); // Draw and update player
 
 	// Loop through projectile array and draw and update each projectile 
 	// Each projectile moves independently of each other
 	// and we can have multiple projectile at the same time on screen instead of just one projectile
-	projectiles.forEach((projectile) => {
+	projectiles.forEach((projectile, projectileIndex) => {
 		projectile.update();
+
+		// Remove projectiles that are off screen
+		setTimeout(() => {
+			if (projectile.x + projectile.radius < 0 ||
+				  projectile.x - projectile.radius > canvas.width ||
+					projectile.y + projectile.radius < 0 ||
+					projectile.y - projectile.radius > canvas.height) {
+				projectiles.splice(projectileIndex, 1);
+			}
+		}, 0) ;
 	});
 
-	enemies.forEach((enemy) => {
+	// Loop through enemies array and draw and update each projectile
+	// Each enemy moves independently of each other
+	// similar to projectiles
+	enemies.forEach((enemy, enemyIndex) => {
 		enemy.update();
-	})
+		setTimeout(() => {
+			if (enemy.x - enemy.radius < 0) {
+				enemies.splice(enemyIndex, 1);
+			}
+		}, 0);
+
+		const distance = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+
+		// Detect collision between player and enemy
+		// Freeze frame upon contact indicating game over
+		if (distance - player.radius - enemy.radius < 1) {
+			cancelAnimationFrame(animationId);
+		}
+		projectiles.forEach((projectile, projectileIndex) => {
+			const distance = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+			// Upon contact between enemy and projectile, remove both
+			if (distance - enemy.radius - projectile.radius < 1) {
+				// Wait until the very last frame to remove from array
+				// This prevents flickering
+				setTimeout(() => {
+					enemies.splice(enemyIndex, 1);
+					projectiles.splice(projectileIndex, 1);
+				}, 0);
+			}
+		});
+	});
+
 }
 
 // Spawn an enemy based on enemySpawnRate
@@ -47,7 +89,9 @@ function spawnEnemies() {
 	setInterval(function() {
 		let enemyX;
 		let enemyY;
-		const enemyRadius = 30;
+
+		// The size of the enemy is random in radius within the interval [20, 40]
+		const enemyRadius = Math.random() * (40 - 20) + 20; 
 
 		// The enemy will spawn randomly on the edges of the window on a 50/50 chance
 		// Math.random() returns a value between 0 and, but not including, 1 (i.e. [0, 1))
